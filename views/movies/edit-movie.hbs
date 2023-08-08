@@ -2,6 +2,7 @@
 <h2>Edit your movie</h2>
 
 <form action="/movies/{{this.oneMovie._id}}/edit" method="post" >
+    <div>
     <label for="title">Title:</label>
         <input type="text" name="title" value="{{oneMovie.title}}">
         <br>
@@ -21,7 +22,8 @@
             {{/if}}
             {{/each}}
         </select>
-        <br>
+        {{!-- <br> --}}
+        </div>
         <button>Update</button>
 
       

@@ -3,11 +3,13 @@
 <p>{{oneMovie.genre}} </p>
 <p>{{oneMovie.plot}} </p>
 {{#each oneMovie.cast}}
-<li>{{this.name}} </li>
+<ul class="list-group">
+    <li class="list-group-item" >{{this.name}} </li>
+    </ul>
 {{/each}}
 <form action="/movies/{{oneMovie._id}}/delete" method="post">
-    <button>Delete</button>
+    <button class="btn btn-danger">Delete</button>
 </form>
 <br>
-<a href="/movies/{{oneMovie._id}}/edit"><button>Update</button></a>
+<a href="/movies/{{oneMovie._id}}/edit"><button class="btn btn-primary" >Update</button></a>
 </div>
