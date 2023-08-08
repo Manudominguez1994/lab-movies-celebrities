@@ -26,7 +26,7 @@ router.post("/create", async (req, res, next) => {
     req.body.plot === ""
   ) {
     console.log("No has escrito nada");
-    res.status(400).render("celebrities/new-celebrity.hbs", {
+    res.status(400).render("movies/new-movie.hbs", {
       error: "Rellene todos los campos plis",
     });
     return;
@@ -64,7 +64,7 @@ router.get("/:movieId", async (req, res, next) => {
 
   try {
     const oneMovie = await Movie.findById(movieId).populate("cast");
-    console.log("movieID", oneMovie);
+    // console.log("movieID", oneMovie);
     res.render("movies/movie-details.hbs", {
       oneMovie,
     });
@@ -72,5 +72,51 @@ router.get("/:movieId", async (req, res, next) => {
     next(error);
   }
 });
-
+//POST /movies/:id/delete => Borrar de nuestra DB y de la renderizacion una pelicula
+router.post("/:movieId/delete",async(req,res,next)=>{
+    try {
+        await Movie.findByIdAndDelete(req.params.movieId)
+        res.redirect("/movies")
+    } catch (error) {
+        next(error)
+    }
+})
+//GET /movies/:id/edit => Renderiza nuestro formulario con los valores actuales de nuestra pelicula
+router.get("/:movieId/edit",async(req, res, next)=>{
+    try {
+        const allCelebrities = await Celebrity.find().select({name:1})
+        const oneMovie = await Movie.findById(req.params.movieId)
+        const cloneCelebrities = JSON.parse(JSON.stringify(allCelebrities))
+        // console.log(cloneCelebrities);
+        // console.log(oneMovie);
+        console.log(req.params.movieId);
+        cloneCelebrities.forEach((eachcelebrity)=>{
+            if(oneMovie.cast.toString() === eachcelebrity._id.toString()){
+                // console.log("celebridades",eachcelebrity);
+                eachcelebrity.isSelected = true;
+            }
+        })
+        res.render("movies/edit-movie.hbs",{
+            oneMovie,
+            cloneCelebrities,
+            
+        })
+    } catch (error) {
+        next(error)
+    }
+})
+//POST /movies/:id/edit => Actualiza los valores de nuestra pelicula en la DB
+router.post("/:movieId/edit", async(req, res, next)=>{
+    try {
+        const updateMovie = await Movie.findByIdAndUpdate(req.params.movieId,{
+            title: req.body.title,
+            genre: req.body.genre,
+            plot: req.body.plot,
+            cast: req.body.cast
+        })
+        res.redirect(`/movies/${updateMovie._id}`)
+    } catch (error) {
+        next(error)
+    }
+})
 module.exports = router;
